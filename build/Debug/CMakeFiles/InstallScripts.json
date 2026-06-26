@@ -1,8 +1,8 @@
 {
 	"InstallScripts" : 
 	[
-		"/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake_install.cmake",
-		"/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake/stm32cubemx/cmake_install.cmake"
+		"C:/Users/traep/Desktop/projects/robot-arm/build/Debug/cmake_install.cmake",
+		"C:/Users/traep/Desktop/projects/robot-arm/build/Debug/cmake/stm32cubemx/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

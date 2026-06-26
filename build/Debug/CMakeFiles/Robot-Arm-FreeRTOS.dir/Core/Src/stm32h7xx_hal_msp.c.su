@@ -1,6 +1,0 @@
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/Core/Src/stm32h7xx_hal_msp.c:64:6:HAL_MspInit	16	static
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/Core/Src/stm32h7xx_hal_msp.c:88:6:HAL_ETH_MspInit	64	static
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/Core/Src/stm32h7xx_hal_msp.c:150:6:HAL_ETH_MspDeInit	16	static
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/Core/Src/stm32h7xx_hal_msp.c:192:6:HAL_TIM_Base_MspInit	24	static
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/Core/Src/stm32h7xx_hal_msp.c:209:6:HAL_TIM_MspPostInit	40	static
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/Core/Src/stm32h7xx_hal_msp.c:241:6:HAL_TIM_Base_MspDeInit	16	static

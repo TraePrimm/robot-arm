@@ -1,7 +1,7 @@
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/CMakeFiles/Robot-Arm-FreeRTOS.dir
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/CMakeFiles/edit_cache.dir
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/CMakeFiles/rebuild_cache.dir
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake/stm32cubemx/CMakeFiles/FreeRTOS.dir
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
-/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
+C:/Users/traep/Desktop/projects/robot-arm/build/Debug/CMakeFiles/Robot-Arm-FreeRTOS.dir
+C:/Users/traep/Desktop/projects/robot-arm/build/Debug/CMakeFiles/edit_cache.dir
+C:/Users/traep/Desktop/projects/robot-arm/build/Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/traep/Desktop/projects/robot-arm/build/Debug/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
+C:/Users/traep/Desktop/projects/robot-arm/build/Debug/cmake/stm32cubemx/CMakeFiles/FreeRTOS.dir
+C:/Users/traep/Desktop/projects/robot-arm/build/Debug/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
+C:/Users/traep/Desktop/projects/robot-arm/build/Debug/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
