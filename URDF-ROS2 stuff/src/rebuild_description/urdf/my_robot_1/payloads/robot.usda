@@ -1,0 +1,155 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.3"
+    }
+    defaultPrim = "rebuild"
+    doc = """Generated from Composed Stage of root layer /tmp/tmp15u8wgao/rebuild.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_my_robot_dcpuhm92/usdex_my_robot/rebuild.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_my_robot_dcpuhm92/temp_my_robot/my_robot.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "rebuild" (
+    prepend apiSchemas = ["IsaacRobotAPI"]
+)
+{
+    prepend rel isaac:physics:robotJoints = [
+        </rebuild/Physics/tn__Revolute12_oA>,
+        </rebuild/Physics/tn__Slider13_k8>,
+        </rebuild/Physics/tn__Slider14_k8>,
+        </rebuild/Physics/tn__Revolute11_oA>,
+        </rebuild/Physics/tn__Revolute10_oA>,
+        </rebuild/Physics/tn__Revolute9_n9>,
+        </rebuild/Physics/tn__Revolute8_n9>,
+        </rebuild/Physics/tn__Revolute7_n9>,
+        </rebuild/Physics/root_joint>,
+    ]
+    prepend rel isaac:physics:robotLinks = [
+        </rebuild/Geometry/base_link/shoulder_link_1/upperarm_link_1/elbow_link_1/wrist_link_1/Wrist_pitch_1/Endo_link_1>,
+        </rebuild/Geometry/base_link/shoulder_link_1/upperarm_link_1/elbow_link_1/wrist_link_1/Wrist_pitch_1>,
+        </rebuild/Geometry/base_link/shoulder_link_1/upperarm_link_1/elbow_link_1/wrist_link_1>,
+        </rebuild/Geometry/base_link/shoulder_link_1/upperarm_link_1/elbow_link_1>,
+        </rebuild/Geometry/base_link/shoulder_link_1/upperarm_link_1>,
+        </rebuild/Geometry/base_link/shoulder_link_1>,
+        </rebuild/Geometry/base_link>,
+        </rebuild/Geometry/base_link/shoulder_link_1/upperarm_link_1/elbow_link_1/wrist_link_1/Wrist_pitch_1/Endo_link_1/passivejaw_link_1>,
+        </rebuild/Geometry/base_link/shoulder_link_1/upperarm_link_1/elbow_link_1/wrist_link_1/Wrist_pitch_1/Endo_link_1/activejaw_link_1>,
+    ]
+    token isaac:robotType = "Default"
+
+    over "Geometry"
+    {
+        over "base_link" (
+            prepend apiSchemas = ["IsaacLinkAPI"]
+        )
+        {
+            over "shoulder_link_1" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+                over "upperarm_link_1" (
+                    prepend apiSchemas = ["IsaacLinkAPI"]
+                )
+                {
+                    over "elbow_link_1" (
+                        prepend apiSchemas = ["IsaacLinkAPI"]
+                    )
+                    {
+                        over "wrist_link_1" (
+                            prepend apiSchemas = ["IsaacLinkAPI"]
+                        )
+                        {
+                            over "Wrist_pitch_1" (
+                                prepend apiSchemas = ["IsaacLinkAPI"]
+                            )
+                            {
+                                over "Endo_link_1" (
+                                    prepend apiSchemas = ["IsaacLinkAPI"]
+                                )
+                                {
+                                    over "passivejaw_link_1" (
+                                        prepend apiSchemas = ["IsaacLinkAPI"]
+                                    )
+                                    {
+                                    }
+
+                                    over "activejaw_link_1" (
+                                        prepend apiSchemas = ["IsaacLinkAPI"]
+                                    )
+                                    {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        over "root_joint" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute7_n9" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute8_n9" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute9_n9" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute10_oA" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute11_oA" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute12_oA" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Slider13_k8" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Slider14_k8" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+    }
+}
+

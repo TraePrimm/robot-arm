@@ -1,0 +1,84 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.3"
+    }
+    defaultPrim = "rebuild"
+    doc = """Generated from Composed Stage of root layer /tmp/tmpf9wztifz/rebuild.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_my_robot_adw1vvxl/usdex_my_robot/rebuild.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_my_robot_adw1vvxl/temp_my_robot/my_robot.usd
+
+
+Generated from Composed Stage of root layer /home/trae/Desktop/robot_ws/src/rebuild_description/urdf/my_robot/payloads/base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "rebuild"
+{
+    over "Physics"
+    {
+        over "tn__Revolute7_n9" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute8_n9" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 5729.578
+        }
+
+        over "tn__Revolute9_n9" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 5729.578
+        }
+
+        over "tn__Revolute10_oA" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Revolute11_oA" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 5729.578
+        }
+
+        over "tn__Revolute12_oA" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+        }
+
+        over "tn__Slider13_k8" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 5729.578
+        }
+
+        over "tn__Slider14_k8" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 5729.578
+        }
+    }
+}
+

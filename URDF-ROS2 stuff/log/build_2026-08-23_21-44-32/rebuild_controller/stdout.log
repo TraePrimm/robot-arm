@@ -1,0 +1,33 @@
+running egg_info
+creating ../../build/rebuild_controller/rebuild_controller.egg-info
+writing ../../build/rebuild_controller/rebuild_controller.egg-info/PKG-INFO
+writing dependency_links to ../../build/rebuild_controller/rebuild_controller.egg-info/dependency_links.txt
+writing requirements to ../../build/rebuild_controller/rebuild_controller.egg-info/requires.txt
+writing top-level names to ../../build/rebuild_controller/rebuild_controller.egg-info/top_level.txt
+writing manifest file '../../build/rebuild_controller/rebuild_controller.egg-info/SOURCES.txt'
+reading manifest file '../../build/rebuild_controller/rebuild_controller.egg-info/SOURCES.txt'
+writing manifest file '../../build/rebuild_controller/rebuild_controller.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/trae/Desktop/robot_ws/build/rebuild_controller/build
+creating /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib
+creating /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib/rebuild_controller
+copying rebuild_controller/__init__.py -> /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib/rebuild_controller
+copying rebuild_controller/joint_cycler.py -> /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib/rebuild_controller
+running install
+running install_lib
+creating /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller
+copying /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib/rebuild_controller/__init__.py -> /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller
+copying /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib/rebuild_controller/joint_cycler.py -> /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller
+byte-compiling /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller/__init__.py to __init__.cpython-312.pyc
+byte-compiling /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller/joint_cycler.py to joint_cycler.cpython-312.pyc
+running install_data
+creating /home/trae/Desktop/robot_ws/install/rebuild_controller/share/ament_index
+creating /home/trae/Desktop/robot_ws/install/rebuild_controller/share/ament_index/resource_index
+creating /home/trae/Desktop/robot_ws/install/rebuild_controller/share/ament_index/resource_index/packages
+copying resource/rebuild_controller -> /home/trae/Desktop/robot_ws/install/rebuild_controller/share/ament_index/resource_index/packages
+copying package.xml -> /home/trae/Desktop/robot_ws/install/rebuild_controller/share/rebuild_controller
+running install_egg_info
+Copying ../../build/rebuild_controller/rebuild_controller.egg-info to /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller-0.0.0-py3.12.egg-info
+running install_scripts
+writing list of installed files to '/home/trae/Desktop/robot_ws/build/rebuild_controller/install.log'

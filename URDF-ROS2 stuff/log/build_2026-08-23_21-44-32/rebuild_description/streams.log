@@ -1,0 +1,21 @@
+[0.777s] Invoking command in '/home/trae/Desktop/robot_ws/src/rebuild_description': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/trae/Desktop/robot_ws/build/rebuild_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rebuild_description build --build-base /home/trae/Desktop/robot_ws/build/rebuild_description/build install --record /home/trae/Desktop/robot_ws/build/rebuild_description/install.log --install-scripts $base/lib/fusion2urdf_ros2 --single-version-externally-managed install_data
+[0.956s] running egg_info
+[0.969s] writing ../../build/rebuild_description/rebuild_description.egg-info/PKG-INFO
+[0.969s] writing dependency_links to ../../build/rebuild_description/rebuild_description.egg-info/dependency_links.txt
+[0.969s] writing requirements to ../../build/rebuild_description/rebuild_description.egg-info/requires.txt
+[0.969s] writing top-level names to ../../build/rebuild_description/rebuild_description.egg-info/top_level.txt
+[0.996s] reading manifest file '../../build/rebuild_description/rebuild_description.egg-info/SOURCES.txt'
+[0.996s] writing manifest file '../../build/rebuild_description/rebuild_description.egg-info/SOURCES.txt'
+[0.997s] running build
+[0.997s] running build_py
+[0.997s] running install
+[1.001s] running install_lib
+[1.015s] running install_data
+[1.015s] copying urdf/my_robot.urdf -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[1.015s] copying urdf/rebuild.xacro -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[1.015s] running install_egg_info
+[1.029s] removing '/home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages/rebuild_description-0.0.0-py3.12.egg-info' (and everything under it)
+[1.030s] Copying ../../build/rebuild_description/rebuild_description.egg-info to /home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages/rebuild_description-0.0.0-py3.12.egg-info
+[1.031s] running install_scripts
+[1.122s] writing list of installed files to '/home/trae/Desktop/robot_ws/build/rebuild_description/install.log'
+[1.139s] Invoked command in '/home/trae/Desktop/robot_ws/src/rebuild_description' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/trae/Desktop/robot_ws/build/rebuild_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rebuild_description build --build-base /home/trae/Desktop/robot_ws/build/rebuild_description/build install --record /home/trae/Desktop/robot_ws/build/rebuild_description/install.log --install-scripts $base/lib/fusion2urdf_ros2 --single-version-externally-managed install_data

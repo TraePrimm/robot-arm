@@ -1,0 +1,64 @@
+[0.512s] Invoking command in '/home/trae/Desktop/robot_ws/src/rebuild_description': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/trae/Desktop/robot_ws/build/rebuild_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rebuild_description build --build-base /home/trae/Desktop/robot_ws/build/rebuild_description/build install --record /home/trae/Desktop/robot_ws/build/rebuild_description/install.log --install-scripts $base/lib/fusion2urdf_ros2 --single-version-externally-managed install_data
+[0.684s] running egg_info
+[0.684s] creating ../../build/rebuild_description/rebuild_description.egg-info
+[0.697s] writing ../../build/rebuild_description/rebuild_description.egg-info/PKG-INFO
+[0.697s] writing dependency_links to ../../build/rebuild_description/rebuild_description.egg-info/dependency_links.txt
+[0.697s] writing requirements to ../../build/rebuild_description/rebuild_description.egg-info/requires.txt
+[0.698s] writing top-level names to ../../build/rebuild_description/rebuild_description.egg-info/top_level.txt
+[0.698s] writing manifest file '../../build/rebuild_description/rebuild_description.egg-info/SOURCES.txt'
+[0.727s] reading manifest file '../../build/rebuild_description/rebuild_description.egg-info/SOURCES.txt'
+[0.727s] writing manifest file '../../build/rebuild_description/rebuild_description.egg-info/SOURCES.txt'
+[0.727s] running build
+[0.728s] running build_py
+[0.728s] creating /home/trae/Desktop/robot_ws/build/rebuild_description/build
+[0.728s] creating /home/trae/Desktop/robot_ws/build/rebuild_description/build/lib
+[0.728s] creating /home/trae/Desktop/robot_ws/build/rebuild_description/build/lib/rebuild_description
+[0.728s] copying rebuild_description/__init__.py -> /home/trae/Desktop/robot_ws/build/rebuild_description/build/lib/rebuild_description
+[0.728s] running install
+[0.732s] running install_lib
+[0.746s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages/rebuild_description
+[0.746s] copying /home/trae/Desktop/robot_ws/build/rebuild_description/build/lib/rebuild_description/__init__.py -> /home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages/rebuild_description
+[0.747s] byte-compiling /home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages/rebuild_description/__init__.py to __init__.cpython-312.pyc
+[0.748s] running install_data
+[0.748s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/share/ament_index
+[0.748s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/share/ament_index/resource_index
+[0.748s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/share/ament_index/resource_index/packages
+[0.748s] copying resource/rebuild_description -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/ament_index/resource_index/packages
+[0.748s] copying package.xml -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description
+[0.748s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/launch
+[0.748s] copying launch/display.launch.py -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/launch
+[0.748s] copying launch/gazebo.launch.py -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/launch
+[0.748s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[0.748s] copying urdf/my_robot.urdf -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[0.748s] copying urdf/materials.xacro -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[0.749s] copying urdf/rebuild.xacro -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[0.749s] copying urdf/rebuild.gazebo -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[0.749s] copying urdf/rebuild.ros2control -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/urdf
+[0.749s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.749s] copying meshes/passivejaw_link_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.749s] copying meshes/Wrist_pitch_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.749s] copying meshes/passivejaw_link_old.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.749s] copying meshes/upperarm_link_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.749s] copying meshes/output_puly (1) (1).stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.750s] copying meshes/shoulder_link_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.750s] copying meshes/activejaw_link_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.750s] copying meshes/Motor_with_encoderback length (1).stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.750s] copying meshes/base_link.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.750s] copying meshes/Motor_with_encoderback length.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.750s] copying meshes/Endo_link_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.751s] copying meshes/as5047P COVER v3.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.752s] copying meshes/Motor_Base_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.752s] copying meshes/elbow_link_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.752s] copying meshes/Spur Gear 24 teeth.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.752s] copying meshes/wrist_link_1.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.753s] copying meshes/as5047P COVER v10.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.753s] copying meshes/cLAMP.stl -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/meshes
+[0.753s] creating /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/config
+[0.753s] copying config/ros_gz_bridge_gazebo.yaml -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/config
+[0.754s] copying config/gazebo.rviz -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/config
+[0.754s] copying config/display.rviz -> /home/trae/Desktop/robot_ws/install/rebuild_description/share/rebuild_description/config
+[0.754s] running install_egg_info
+[0.770s] Copying ../../build/rebuild_description/rebuild_description.egg-info to /home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages/rebuild_description-0.0.0-py3.12.egg-info
+[0.773s] running install_scripts
+[0.861s] writing list of installed files to '/home/trae/Desktop/robot_ws/build/rebuild_description/install.log'
+[0.877s] Invoked command in '/home/trae/Desktop/robot_ws/src/rebuild_description' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/trae/Desktop/robot_ws/build/rebuild_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/trae/Desktop/robot_ws/install/rebuild_description/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rebuild_description build --build-base /home/trae/Desktop/robot_ws/build/rebuild_description/build install --record /home/trae/Desktop/robot_ws/build/rebuild_description/install.log --install-scripts $base/lib/fusion2urdf_ros2 --single-version-externally-managed install_data

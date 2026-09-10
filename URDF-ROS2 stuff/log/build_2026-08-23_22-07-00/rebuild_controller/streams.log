@@ -1,0 +1,24 @@
+[0.526s] Invoking command in '/home/trae/Desktop/robot_ws/src/rebuild_controller': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/trae/Desktop/robot_ws/build/rebuild_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rebuild_controller build --build-base /home/trae/Desktop/robot_ws/build/rebuild_controller/build install --record /home/trae/Desktop/robot_ws/build/rebuild_controller/install.log --install-scripts $base/lib/rebuild_controller --single-version-externally-managed install_data
+[0.709s] running egg_info
+[0.724s] writing ../../build/rebuild_controller/rebuild_controller.egg-info/PKG-INFO
+[0.724s] writing dependency_links to ../../build/rebuild_controller/rebuild_controller.egg-info/dependency_links.txt
+[0.724s] writing entry points to ../../build/rebuild_controller/rebuild_controller.egg-info/entry_points.txt
+[0.724s] writing requirements to ../../build/rebuild_controller/rebuild_controller.egg-info/requires.txt
+[0.724s] writing top-level names to ../../build/rebuild_controller/rebuild_controller.egg-info/top_level.txt
+[0.755s] reading manifest file '../../build/rebuild_controller/rebuild_controller.egg-info/SOURCES.txt'
+[0.755s] writing manifest file '../../build/rebuild_controller/rebuild_controller.egg-info/SOURCES.txt'
+[0.755s] running build
+[0.755s] running build_py
+[0.756s] copying rebuild_controller/joint_cycler.py -> /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib/rebuild_controller
+[0.756s] running install
+[0.760s] running install_lib
+[0.775s] copying /home/trae/Desktop/robot_ws/build/rebuild_controller/build/lib/rebuild_controller/joint_cycler.py -> /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller
+[0.775s] byte-compiling /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller/joint_cycler.py to joint_cycler.cpython-312.pyc
+[0.775s] running install_data
+[0.775s] running install_egg_info
+[0.791s] removing '/home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller-0.0.0-py3.12.egg-info' (and everything under it)
+[0.791s] Copying ../../build/rebuild_controller/rebuild_controller.egg-info to /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages/rebuild_controller-0.0.0-py3.12.egg-info
+[0.793s] running install_scripts
+[0.886s] Installing joint_cycler script to /home/trae/Desktop/robot_ws/install/rebuild_controller/lib/rebuild_controller
+[0.886s] writing list of installed files to '/home/trae/Desktop/robot_ws/build/rebuild_controller/install.log'
+[0.903s] Invoked command in '/home/trae/Desktop/robot_ws/src/rebuild_controller' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/trae/Desktop/robot_ws/build/rebuild_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/trae/Desktop/robot_ws/install/rebuild_controller/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rebuild_controller build --build-base /home/trae/Desktop/robot_ws/build/rebuild_controller/build install --record /home/trae/Desktop/robot_ws/build/rebuild_controller/install.log --install-scripts $base/lib/rebuild_controller --single-version-externally-managed install_data
