@@ -26,8 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-extern RobotState g_robot_state;
-extern MotionCommand g_command;
+#include "robot_arm.h"
+#include "ros_interface.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,13 +48,14 @@ typedef StaticTask_t osStaticThreadDef_t;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+RobotArm_t g_arm;
+RosInterface_t g_ros;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 3000 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for ControlLoop */
@@ -143,6 +144,7 @@ void StartRosTask(void *argument);
 void StartDiagTask(void *argument);
 void StartHomingTask(void *argument);
 
+extern void MX_LWIP_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -212,6 +214,8 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
+  /* init code for LWIP */
+  MX_LWIP_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
@@ -231,23 +235,16 @@ void StartDefaultTask(void *argument)
 void StartControlLoopTask(void *argument)
 {
   /* USER CODE BEGIN StartControlLoopTask */
+  RobotArm_Init(&g_arm); // TODO: check return value once joints 2-5 are wired
+
   TickType_t lastWake = osKernelGetTickCount();
-  const TickType_t period = 1;
+  const uint32_t period_ticks = 1; // 1ms -> 1kHz control loop
 
   for(;;)
   {
-      // CONTROL LOOP WILL LIVE HERE
-
-      // Fake motor
-      g_robot_state.joint_pos[0] += 0.001f;
-
-      float error = g_command.joint_target[0] - g_robot_state.joint_pos[0];
-
-      float control = error * 1.0f; // fake P controller
-
-
-      osDelayUntil(lastWake + period);
-      lastWake += period;
+    RobotArm_Update(&g_arm, 0.001f);
+    lastWake += period_ticks;
+    osDelayUntil(lastWake);
   }
   /* USER CODE END StartControlLoopTask */
 }
@@ -265,12 +262,7 @@ void StartSafetyTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-      if (HAL_GPIO_ReadPin(ESTOP_GPIO_Port, ESTOP_Pin) == GPIO_PIN_RESET)
-      {
-          g_robot_state.faults = 1;
-      }
 
-      osDelay(10);
   }
   /* USER CODE END StartSafetyTask */
 }
@@ -303,12 +295,14 @@ void StartMotionPlannerTask(void *argument)
 void StartRosTask(void *argument)
 {
   /* USER CODE BEGIN StartRosTask */
-  /* Infinite loop */
+  if (RosInterface_Init(&g_ros, &g_arm)) {
+      RosInterface_Task(NULL); // never returns - spins the executor forever
+  }
+  /* agent unreachable - park here rather than crash, so the rest of the
+   * board (control loop, etc.) keeps running while you debug Ethernet */
   for(;;)
   {
-      g_command.joint_target[0] = 1.0f; // simulate incoming command
-
-      osDelay(10);
+    osDelay(1000);
   }
   /* USER CODE END StartRosTask */
 }
