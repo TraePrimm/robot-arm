@@ -46,24 +46,34 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(TMC_EN_GPIO_Port, TMC_EN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, Joint_0_DIR_Pin|Joint_1_DIR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(TMC_DIR_GPIO_Port, TMC_DIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(Joint_0_EncoderCS_GPIO_Port, Joint_0_EncoderCS_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pin : TMC_EN_Pin */
-  GPIO_InitStruct.Pin = TMC_EN_Pin;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(Joint_1_EncoderCS_GPIO_Port, Joint_1_EncoderCS_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : Joint_0_DIR_Pin Joint_1_DIR_Pin */
+  GPIO_InitStruct.Pin = Joint_0_DIR_Pin|Joint_1_DIR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(TMC_EN_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : TMC_DIR_Pin */
-  GPIO_InitStruct.Pin = TMC_DIR_Pin;
+  /*Configure GPIO pin : Joint_0_EncoderCS_Pin */
+  GPIO_InitStruct.Pin = Joint_0_EncoderCS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(TMC_DIR_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(Joint_0_EncoderCS_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Joint_1_EncoderCS_Pin */
+  GPIO_InitStruct.Pin = Joint_1_EncoderCS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(Joint_1_EncoderCS_GPIO_Port, &GPIO_InitStruct);
 
 }
 

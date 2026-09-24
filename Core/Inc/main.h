@@ -60,10 +60,18 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define TMC_EN_Pin GPIO_PIN_0
-#define TMC_EN_GPIO_Port GPIOC
-#define TMC_DIR_Pin GPIO_PIN_3
-#define TMC_DIR_GPIO_Port GPIOA
+#define Joint_0_DIR_Pin GPIO_PIN_0
+#define Joint_0_DIR_GPIO_Port GPIOC
+#define Joint_0_Step_Pin GPIO_PIN_0
+#define Joint_0_Step_GPIO_Port GPIOA
+#define Joint_0_EncoderCS_Pin GPIO_PIN_4
+#define Joint_0_EncoderCS_GPIO_Port GPIOA
+#define Joint_1_EncoderCS_Pin GPIO_PIN_2
+#define Joint_1_EncoderCS_GPIO_Port GPIOB
+#define Joint_1_Step_Pin GPIO_PIN_8
+#define Joint_1_Step_GPIO_Port GPIOC
+#define Joint_1_DIR_Pin GPIO_PIN_9
+#define Joint_1_DIR_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 
