@@ -60,18 +60,40 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define Joint_0_DIR_Pin GPIO_PIN_0
-#define Joint_0_DIR_GPIO_Port GPIOC
-#define Joint_0_Step_Pin GPIO_PIN_0
-#define Joint_0_Step_GPIO_Port GPIOA
+#define Joint_2_EncoderCS_Pin GPIO_PIN_2
+#define Joint_2_EncoderCS_GPIO_Port GPIOC
+#define Joint_2_Dir_Pin GPIO_PIN_3
+#define Joint_2_Dir_GPIO_Port GPIOC
+#define Joint_5_Step_Pin GPIO_PIN_0
+#define Joint_5_Step_GPIO_Port GPIOA
 #define Joint_0_EncoderCS_Pin GPIO_PIN_4
 #define Joint_0_EncoderCS_GPIO_Port GPIOA
+#define Joint_0_Step_Pin GPIO_PIN_5
+#define Joint_0_Step_GPIO_Port GPIOA
 #define Joint_1_EncoderCS_Pin GPIO_PIN_2
 #define Joint_1_EncoderCS_GPIO_Port GPIOB
+#define Joint_4_Step_Pin GPIO_PIN_15
+#define Joint_4_Step_GPIO_Port GPIOB
+#define Joint_2_Step_Pin GPIO_PIN_12
+#define Joint_2_Step_GPIO_Port GPIOD
+#define Joint_3_Step_Pin GPIO_PIN_6
+#define Joint_3_Step_GPIO_Port GPIOC
 #define Joint_1_Step_Pin GPIO_PIN_8
 #define Joint_1_Step_GPIO_Port GPIOC
 #define Joint_1_DIR_Pin GPIO_PIN_9
 #define Joint_1_DIR_GPIO_Port GPIOC
+#define Joint_3_EncoderCS_Pin GPIO_PIN_10
+#define Joint_3_EncoderCS_GPIO_Port GPIOC
+#define Joint_3_Dir_Pin GPIO_PIN_11
+#define Joint_3_Dir_GPIO_Port GPIOC
+#define Joint_4_EncoderCS_Pin GPIO_PIN_0
+#define Joint_4_EncoderCS_GPIO_Port GPIOD
+#define Joint_4_Dir_Pin GPIO_PIN_1
+#define Joint_4_Dir_GPIO_Port GPIOD
+#define Joint_5_EncoderCS_Pin GPIO_PIN_2
+#define Joint_5_EncoderCS_GPIO_Port GPIOD
+#define Joint_5_Dir_Pin GPIO_PIN_3
+#define Joint_5_Dir_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
 

@@ -1,5 +1,5 @@
 # ninja log v7
-8	40	8119339266327288	build.ninja	a06e96762aadd929
+8	40	8119994327687744	build.ninja	a06e96762aadd929
 8	40	1781838768793291932	/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake_install.cmake	a06e96762aadd929
 8	40	1781838768793291932	/home/trae-work/Desktop/test-nuc/Robot-Arm-FreeRTOS/build/Debug/cmake/stm32cubemx/cmake_install.cmake	a06e96762aadd929
 5	47	1781836659099308996	CMakeFiles/Robot-Arm-FreeRTOS.dir/startup_stm32h723xx.s.obj	af231c713905e6a8
