@@ -1,6 +1,6 @@
 | Item | (info on what to put) |
 |---|---|
-| SPI1_SCK | PA5 |
+| SPI1_SCK | PG11 |
 | SPI1_MISO | PA6 |
 | SPI1_MOSI | PD7 |
 | Ethernet RMII pins (all) | Ethernet RMII pins (all)
