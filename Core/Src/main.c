@@ -28,7 +28,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "tmc2209_frame.h"
+#include "tmc2209_uart.h"
+#include "tmc2209_cfg.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,6 +53,15 @@
 COM_InitTypeDef BspCOMInit;
 
 /* USER CODE BEGIN PV */
+
+
+volatile tmc_io_status_t last_status;   /* watch this in the debugger */
+uint8_t tmc_req[4];
+uint8_t tmc_reply[8];
+
+tmc_dev_t d0;
+volatile tmc_status_t cfg_status;
+volatile tmc_status_t ver_status;
 
 /* USER CODE END PV */
 
@@ -109,7 +120,15 @@ int main(void)
   MX_TIM12_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+    tmc_dev_init(&d0, &huart1, 0);
+  tmc_cfg_t cfg = tmc_cfg_default();
+  cfg_status = tmc_configure(&d0, &cfg);      /* runs once; read this in the debugger */
 
+  while (1)                                   /* keeps traffic on the wire for PulseView */
+  {
+    ver_status = tmc_check_version(&d0);
+    HAL_Delay(100);
+  }
   /* USER CODE END 2 */
 
   /* Init scheduler */

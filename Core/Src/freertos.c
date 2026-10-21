@@ -262,7 +262,7 @@ void StartSafetyTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-
+    osDelay(1);
   }
   /* USER CODE END StartSafetyTask */
 }
