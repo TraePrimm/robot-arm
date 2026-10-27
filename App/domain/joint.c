@@ -1,25 +1,42 @@
 /**
  * joint.c
  *
- * Step generation approach: Joint_Update() runs the position PID and
- * produces a desired step FREQUENCY (steps/sec) + direction. It writes
- * that frequency into the joint's hardware timer's auto-reload register,
- * so the timer's period-elapsed interrupt fires at exactly that rate.
- * Joint_StepISR() (called from that interrupt) just toggles the STEP pin -
- * it does no math, so it's safe to call from an ISR at high frequency.
+ * Step generation: the joint's timer runs in PWM mode on the STEP pin, one
+ * PWM period per step (50% duty). Joint_Update() produces a desired step
+ * FREQUENCY (steps/sec) + direction and writes it into the timer's
+ * auto-reload (period) and compare registers. No interrupt per step.
  *
- * TODO before this compiles for real: set STEP_TIMER_CLK_HZ to your
- * actual timer input clock divided by whatever prescaler you configured
- * in CubeMX for each step_timer (e.g. if APB timer clock is 200MHz and
- * you set PSC=199, STEP_TIMER_CLK_HZ = 1,000,000).
+ * Expected CubeMX settings for every step timer (verify in tim.c):
+ *   - the STEP channel set to "PWM Generation CHx", PWM mode 1, polarity high
+ *   - "Auto-reload preload": Enable   (period changes apply at the next
+ *                                      period boundary, no glitched pulse)
+ *   - prescaler chosen so the count rate is step_timer_clk_hz in the config
+ * The period (ARR) set in CubeMX does not matter: this code overwrites it.
  */
 
 #include "joint.h"
 #include <math.h>
 
-#define STEP_TIMER_CLK_HZ   1000000.0f  // TODO: match your CubeMX PSC setting
-#define MAX_STEP_FREQ_HZ     50000.0f   // sanity clamp, raise once tuned
+#define MAX_STEP_FREQ_HZ      50000.0f  // sanity clamp, raise once tuned
 #define MIN_MOVE_DEG          0.01f     // deadband to avoid dithering at rest
+#define FULL_STEPS_PER_REV    200.0f    // 1.8 degree motor (NEMA17)
+#define STEP_ARR_MAX          65535.0f  // 16-bit limit; fits every timer, incl. the 32-bit ones
+#define MAX_INTEGRAL_TERM_DPS 30.0f     // anti-windup: cap on the I term's velocity contribution
+
+static uint8_t current_to_31(float fraction)
+{
+    if (fraction < 0.0f) fraction = 0.0f;
+    if (fraction > 1.0f) fraction = 1.0f;
+    return (uint8_t)(fraction * 31.0f + 0.5f);
+}
+
+static void joint_stop_steps(Joint_t *joint)
+{
+    if (joint->step_running) {
+        HAL_TIM_PWM_Stop(joint->cfg.step_timer, joint->cfg.step_channel);
+        joint->step_running = false;
+    }
+}
 
 bool Joint_Init(Joint_t *joint, const Joint_Config_t *cfg)
 {
@@ -30,41 +47,45 @@ bool Joint_Init(Joint_t *joint, const Joint_Config_t *cfg)
     joint->integral = 0.0f;
     joint->prev_error = 0.0f;
     joint->fault = false;
+    joint->ready = false;
+    joint->step_running = false;
 
+    /* Make sure no pulses are running, then pick a known direction. */
+    HAL_TIM_PWM_Stop(cfg->step_timer, cfg->step_channel);
     HAL_GPIO_WritePin(cfg->dir_port, cfg->dir_pin, GPIO_PIN_RESET);
 
-    TMC2209_Init(&joint->motor, cfg->uart, cfg->tmc_address);
-    AS5047P_Init(&joint->encoder, cfg->spi, cfg->encoder_cs_port, cfg->encoder_cs_pin);
+    /* Configure the driver. Every write is confirmed via IFCNT, and an
+     * unsupported microstep value is rejected instead of silently replaced. */
+    tmc_dev_init(&joint->tmc, cfg->uart, cfg->tmc_address);
+    tmc_cfg_t tc = tmc_cfg_default();
+    tc.microsteps   = cfg->microsteps;
+    tc.run_current  = current_to_31(cfg->run_current);
+    tc.hold_current = current_to_31(cfg->hold_current);
 
-    if (!TMC2209_IsConnected(&joint->motor)) {
+    joint->tmc_status = tmc_configure(&joint->tmc, &tc);
+    if (joint->tmc_status != TMC_OK) {
         joint->fault = true;
         return false;
     }
-    if (!TMC2209_Configure(&joint->motor, cfg->microsteps)) {
-        joint->fault = true;
-        return false;
+
+    if (cfg->open_loop) {          /* bring-up mode: no encoder involved */
+        joint->ready = true;
+        return true;
     }
-    uint8_t run_31  = (uint8_t)(cfg->run_current * 31.0f);
-    uint8_t hold_31 = (uint8_t)(cfg->hold_current * 31.0f);
-    if (!TMC2209_SetRunCurrent(&joint->motor, run_31, hold_31)) {
-        joint->fault = true;
-        return false;
-    }
+
+    AS5047P_Init(&joint->encoder, cfg->spi, cfg->encoder_cs_port, cfg->encoder_cs_pin);
 
     /* Prime current_deg with a real encoder reading so the first PID
      * tick doesn't see a huge bogus error from a stale 0.0. */
     float initial_deg;
-    if (AS5047P_ReadAngleDeg(&joint->encoder, &initial_deg)) {
-        joint->current_deg = initial_deg;
-        joint->target_deg = initial_deg; // don't leap to 0 on boot
-    } else {
+    if (!AS5047P_ReadAngleDeg(&joint->encoder, &initial_deg)) {
         joint->fault = true;
         return false;
     }
+    joint->current_deg = initial_deg;
+    joint->target_deg = initial_deg; // don't leap to 0 on boot
 
-    /* Step timer starts stopped - Joint_Update enables/sets its rate. */
-    HAL_TIM_Base_Stop_IT(cfg->step_timer);
-
+    joint->ready = true;
     return true;
 }
 
@@ -73,36 +94,70 @@ void Joint_SetTargetDeg(Joint_t *joint, float target_deg)
     joint->target_deg = target_deg;
 }
 
+/* One PWM period = one step, so step_hz = timer_clk / (ARR + 1). */
 static void joint_set_step_frequency(Joint_t *joint, float freq_hz, bool positive_dir)
 {
     TIM_HandleTypeDef *tim = joint->cfg.step_timer;
+    uint32_t ch = joint->cfg.step_channel;
 
-    if (freq_hz < 1.0f) {
-        HAL_TIM_Base_Stop_IT(tim);
-        return;
-    }
     if (freq_hz > MAX_STEP_FREQ_HZ) {
         freq_hz = MAX_STEP_FREQ_HZ;
     }
 
-    /* We toggle the pin once per interrupt, so a full step needs TWO
-     * interrupts (rise+fall) -> interrupt rate = 2x step_hz. */
-    uint32_t arr = (uint32_t)(STEP_TIMER_CLK_HZ / (2.0f * freq_hz)) - 1;
-    __HAL_TIM_SET_AUTORELOAD(tim, arr);
-    __HAL_TIM_SET_COUNTER(tim, 0);
+    float arr_f = (freq_hz >= 1.0f) ? (joint->cfg.step_timer_clk_hz / freq_hz - 1.0f) : STEP_ARR_MAX + 1.0f;
+
+    /* Too slow for this timer's range (or ~zero): stop. Pick the prescaler
+     * so this limit is below any speed you care about. */
+    if (arr_f > STEP_ARR_MAX) {
+        joint_stop_steps(joint);
+        return;
+    }
+    if (arr_f < 3.0f) {            /* keep a few counts for a clean 50% pulse */
+        arr_f = 3.0f;
+    }
+
+    uint32_t arr = (uint32_t)(arr_f + 0.5f);
+    uint32_t cmp = (arr + 1u) / 2u;   /* 50% duty */
 
     HAL_GPIO_WritePin(joint->cfg.dir_port, joint->cfg.dir_pin,
-                       positive_dir ? GPIO_PIN_SET : GPIO_PIN_RESET);
+                      positive_dir ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
-    HAL_TIM_Base_Start_IT(tim);
+    if (!joint->step_running) {
+        /* Starting from stopped: load fresh values and force them in. */
+        __HAL_TIM_SET_AUTORELOAD(tim, arr);
+        __HAL_TIM_SET_COMPARE(tim, ch, cmp);
+        __HAL_TIM_SET_COUNTER(tim, 0);
+        HAL_TIM_GenerateEvent(tim, TIM_EVENTSOURCE_UPDATE);
+        HAL_TIM_PWM_Start(tim, ch);
+        joint->step_running = true;
+    } else {
+        /* Already running: change only the period and compare. With
+         * auto-reload preload on, they take effect at the next period
+         * boundary. Never touch the counter here: doing it every control
+         * tick would stop slow step rates from ever completing a period. */
+        __HAL_TIM_SET_AUTORELOAD(tim, arr);
+        __HAL_TIM_SET_COMPARE(tim, ch, cmp);
+    }
+}
+
+void Joint_RunOpenLoop(Joint_t *joint, float step_hz, bool positive_dir)
+{
+    if (!joint->ready || !joint->cfg.open_loop) {
+        return;
+    }
+    joint_set_step_frequency(joint, step_hz, positive_dir);
 }
 
 void Joint_Update(Joint_t *joint, float dt)
 {
+    if (!joint->ready || joint->cfg.open_loop) {
+        return;
+    }
+
     float measured_deg;
     if (!AS5047P_ReadAngleDeg(&joint->encoder, &measured_deg)) {
         joint->fault = true;
-        joint_set_step_frequency(joint, 0.0f, true); // stop moving on sensor loss
+        joint_stop_steps(joint);   // stop moving on sensor loss
         return;
     }
 
@@ -117,13 +172,18 @@ void Joint_Update(Joint_t *joint, float dt)
     float error = joint->target_deg - joint->current_deg;
 
     if (fabsf(error) < MIN_MOVE_DEG) {
-        joint_set_step_frequency(joint, 0.0f, true);
+        joint_stop_steps(joint);
         joint->integral = 0.0f; // avoid windup while parked
         joint->prev_error = error;
         return;
     }
 
     joint->integral += error * dt;
+    if (joint->cfg.ki > 0.0f) {                       // anti-windup clamp
+        float limit = MAX_INTEGRAL_TERM_DPS / joint->cfg.ki;
+        if (joint->integral >  limit) joint->integral =  limit;
+        if (joint->integral < -limit) joint->integral = -limit;
+    }
     float derivative = (dt > 0.0f) ? ((error - joint->prev_error) / dt) : 0.0f;
     joint->prev_error = error;
 
@@ -137,9 +197,9 @@ void Joint_Update(Joint_t *joint, float dt)
 
     /* Convert output-shaft deg/sec -> motor step frequency:
      *   motor_rev/sec = (vel_dps/360) * gear_ratio
-     *   steps/sec     = motor_rev/sec * microsteps * 200 (full steps/rev, NEMA17) */
+     *   steps/sec     = motor_rev/sec * microsteps * full steps per rev */
     float motor_rev_per_sec = (vel_abs_dps / 360.0f) * joint->cfg.gear_ratio;
-    float step_freq_hz = motor_rev_per_sec * (float)joint->cfg.microsteps * 200.0f;
+    float step_freq_hz = motor_rev_per_sec * (float)joint->cfg.microsteps * FULL_STEPS_PER_REV;
 
     joint_set_step_frequency(joint, step_freq_hz, positive_dir);
 }
@@ -147,8 +207,4 @@ void Joint_Update(Joint_t *joint, float dt)
 float Joint_GetPositionDeg(const Joint_t *joint) { return joint->current_deg; }
 float Joint_GetVelocityDps(const Joint_t *joint) { return joint->current_vel_dps; }
 bool Joint_HasFault(const Joint_t *joint) { return joint->fault; }
-
-void Joint_StepISR(Joint_t *joint)
-{
-    HAL_GPIO_TogglePin(joint->cfg.step_port, joint->cfg.step_pin);
-}
+tmc_status_t Joint_GetTmcStatus(const Joint_t *joint) { return joint->tmc_status; }
