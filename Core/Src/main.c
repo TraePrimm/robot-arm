@@ -31,6 +31,7 @@
 #include "tmc2209_frame.h"
 #include "tmc2209_uart.h"
 #include "tmc2209_cfg.h"
+#include "robot_arm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,13 +56,10 @@ COM_InitTypeDef BspCOMInit;
 /* USER CODE BEGIN PV */
 
 
-volatile tmc_io_status_t last_status;   /* watch this in the debugger */
-uint8_t tmc_req[4];
-uint8_t tmc_reply[8];
-
-tmc_dev_t d0;
-volatile tmc_status_t cfg_status;
-volatile tmc_status_t ver_status;
+RobotArm_t arm;                    /* extern this from other files later */
+volatile bool arm_init_ok;         /* debugger watch */
+volatile bool j0_ready;            /* debugger watch */
+volatile tmc_status_t j0_tmc;      /* debugger watch, replaces cfg_status */
 
 /* USER CODE END PV */
 
@@ -120,15 +118,14 @@ int main(void)
   MX_TIM12_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-    tmc_dev_init(&d0, &huart1, 0);
-  tmc_cfg_t cfg = tmc_cfg_default();
-  cfg_status = tmc_configure(&d0, &cfg);      /* runs once; read this in the debugger */
+  arm_init_ok = RobotArm_Init(&arm);              /* will be false: joints 1-5 unwired */
+  j0_ready    = arm.joints[0].ready;
+  j0_tmc      = Joint_GetTmcStatus(&arm.joints[0]);
 
-  while (1)                                   /* keeps traffic on the wire for PulseView */
-  {
-    ver_status = tmc_check_version(&d0);
-    HAL_Delay(100);
-  }
+Joint_RunOpenLoop(&arm.joints[0], 800.0f, true);
+HAL_Delay(5000);
+Joint_RunOpenLoop(&arm.joints[0], 0.0f, true);   /* below 1 Hz, joint.c stops the pulses */
+while (1) { HAL_Delay(100); }
   /* USER CODE END 2 */
 
   /* Init scheduler */
