@@ -55,12 +55,6 @@ COM_InitTypeDef BspCOMInit;
 
 /* USER CODE BEGIN PV */
 
-
-RobotArm_t arm;                    /* extern this from other files later */
-volatile bool arm_init_ok;         /* debugger watch */
-volatile bool j0_ready;            /* debugger watch */
-volatile tmc_status_t j0_tmc;      /* debugger watch, replaces cfg_status */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,7 +62,15 @@ void SystemClock_Config(void);
 static void MPU_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
+bool cubemx_transport_open(struct uxrCustomTransport * transport);
+bool cubemx_transport_close(struct uxrCustomTransport * transport);
+size_t cubemx_transport_write(struct uxrCustomTransport* transport, const uint8_t * buf, size_t len, uint8_t * err);
+size_t cubemx_transport_read(struct uxrCustomTransport* transport, uint8_t* buf, size_t len, int timeout, uint8_t* err);
 
+void * microros_allocate(size_t size, void * state);
+void microros_deallocate(void * pointer, void * state);
+void * microros_reallocate(void * pointer, size_t size, void * state);
+void * microros_zero_allocate(size_t number_of_elements, size_t size_of_element, void * state);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -84,6 +86,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+  extern uint64_t _slwip, _elwip;
+  for (volatile uint64_t *p = &_slwip; p < &_elwip; ++p) *p = 0;
 
   /* USER CODE END 1 */
 
@@ -109,7 +113,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
-  MX_SPI1_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   MX_TIM4_Init();
@@ -117,15 +120,9 @@ int main(void)
   MX_TIM8_Init();
   MX_TIM12_Init();
   MX_USART2_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  arm_init_ok = RobotArm_Init(&arm);              /* will be false: joints 1-5 unwired */
-  j0_ready    = arm.joints[0].ready;
-  j0_tmc      = Joint_GetTmcStatus(&arm.joints[0]);
 
-Joint_RunOpenLoop(&arm.joints[0], 800.0f, true);
-HAL_Delay(5000);
-Joint_RunOpenLoop(&arm.joints[0], 0.0f, true);   /* below 1 Hz, joint.c stops the pulses */
-while (1) { HAL_Delay(100); }
   /* USER CODE END 2 */
 
   /* Init scheduler */

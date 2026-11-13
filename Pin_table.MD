@@ -1,10 +1,10 @@
 | Item | (info on what to put) |
 |---|---|
-| SPI1_SCK | PG11 |
+| SPI1_SCK | PG3|
 | SPI1_MISO | PA6 |
 | SPI1_MOSI | PD7 |
 | Ethernet RMII pins (all) | Ethernet RMII pins (all)
-ETH_MDC: PC1; ETH_REF_CLK: PA1; ETH_MDIO: PA2; ETH_TXD1: PB13; ETH_TXD0: PB12; ETH_TX_EN: PB11; ETH_CRS_DV: PA7; ETH_RXD0: PC4; ETH_RXD1: PC5 |
+ETH_MDC: ETH_MDC: PC1; ETH_REF_CLK: PA1; ETH_MDIO: PA2; ETH_TXD1: PB13; ETH_TXD0: PG13 (was PB12); ETH_TX_EN: PG11 (was PB11); ETH_CRS_DV: PA7; ETH_RXD0: PC4; ETH_RXD1: PC5 |
 | HAL timebase timer | TIM1 |
 | Joint 0 — Encoder CS | PA4 (Output, High default) |
 | Joint 0 — STEP | PA5 (Output, via TIM2_CH1) |
@@ -38,3 +38,4 @@ ETH_MDC: PC1; ETH_REF_CLK: PA1; ETH_MDIO: PA2; ETH_TXD1: PB13; ETH_TXD0: PB12; E
 | Joint 5 — TMC2209 UART bus + address | huart2, address 1 |
 | UART1 TX/RX pins | PA9 (single wire — one pin serves both) |
 | UART2 TX/RX pins | PD5 (single wire — one pin serves both)|
+|Network address| Nucleo 192.168.50.10/24; agent (laptop) 192.168.50.1, UDP port 8888|

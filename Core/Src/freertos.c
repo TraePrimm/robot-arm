@@ -28,6 +28,9 @@
 /* USER CODE BEGIN Includes */
 #include "robot_arm.h"
 #include "ros_interface.h"
+#include <rmw_microros/rmw_microros.h>   
+#include <uxr/client/transport.h>        
+#include <rcutils/allocator.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,19 +51,24 @@ typedef StaticTask_t osStaticThreadDef_t;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-RobotArm_t g_arm;
-RosInterface_t g_ros;
+   RobotArm_t g_arm;
+   RosInterface_t g_ros;
+   volatile bool     g_net_ready = false;
+   volatile uint32_t g_heap_free = 0;
+   volatile uint32_t j0_ready = 0;
+   volatile uint32_t j0_tmc   = 0;
+   volatile uint32_t g_fault_code = 0;   /* 1 = stack overflow, 2 = malloc failed */
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 3000 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for ControlLoop */
 osThreadId_t ControlLoopHandle;
-uint32_t ControlLoopBuffer[ 512 ];
+uint32_t ControlLoopBuffer[ 1024 ];
 osStaticThreadDef_t ControlLoopControlBlock;
 const osThreadAttr_t ControlLoop_attributes = {
   .name = "ControlLoop",
@@ -96,7 +104,7 @@ const osThreadAttr_t MotionPlanner_attributes = {
 };
 /* Definitions for ROS2 */
 osThreadId_t ROS2Handle;
-uint32_t ROS2Buffer[ 2048 ];
+uint32_t ROS2Buffer[ 3000 ];
 osStaticThreadDef_t ROS2ControlBlock;
 const osThreadAttr_t ROS2_attributes = {
   .name = "ROS2",
@@ -133,7 +141,14 @@ const osThreadAttr_t Homing_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+bool   cubemx_transport_open(struct uxrCustomTransport *t);
+bool   cubemx_transport_close(struct uxrCustomTransport *t);
+size_t cubemx_transport_write(struct uxrCustomTransport *t, const uint8_t *buf, size_t len, uint8_t *err);
+size_t cubemx_transport_read(struct uxrCustomTransport *t, uint8_t *buf, size_t len, int timeout, uint8_t *err);
+void  *microros_allocate(size_t size, void *state);
+void   microros_deallocate(void *ptr, void *state);
+void  *microros_reallocate(void *ptr, size_t size, void *state);
+void  *microros_zero_allocate(size_t n, size_t size, void *state);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -146,6 +161,47 @@ void StartHomingTask(void *argument);
 
 extern void MX_LWIP_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/* Hook prototypes */
+void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName);
+void vApplicationMallocFailedHook(void);
+
+/* USER CODE BEGIN 4 */
+void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName)
+{
+
+    (void)xTask; (void)pcTaskName;
+    g_fault_code = 1;
+    __disable_irq();
+    for(;;) {}
+
+   /* Run time stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+   called if a stack overflow is detected. */
+}
+/* USER CODE END 4 */
+
+/* USER CODE BEGIN 5 */
+void vApplicationMallocFailedHook(void)
+{
+
+    g_fault_code = 2;
+    __disable_irq();
+    for(;;) {}
+
+
+   /* vApplicationMallocFailedHook() will only be called if
+   configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h. It is a hook
+   function that will get called if a call to pvPortMalloc() fails.
+   pvPortMalloc() is called internally by the kernel whenever a task, queue,
+   timer or semaphore is created. It is also called by various parts of the
+   demo application. If heap_1.c or heap_2.c are used, then the size of the
+   heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+   FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+   to query the size of free heap space that remains (although it does not
+   provide information on how the remaining heap might be fragmented). */
+}
+/* USER CODE END 5 */
 
 /**
   * @brief  FreeRTOS initialization
@@ -217,6 +273,7 @@ void StartDefaultTask(void *argument)
   /* init code for LWIP */
   MX_LWIP_Init();
   /* USER CODE BEGIN StartDefaultTask */
+    g_net_ready = true;
   /* Infinite loop */
   for(;;)
   {
@@ -242,6 +299,8 @@ void StartControlLoopTask(void *argument)
 
   for(;;)
   {
+    j0_ready = g_arm.joints[0].ready ? 1u : 0u;
+    j0_tmc   = (uint32_t)Joint_GetTmcStatus(&g_arm.joints[0]);
     RobotArm_Update(&g_arm, 0.001f);
     lastWake += period_ticks;
     osDelayUntil(lastWake);
@@ -295,15 +354,23 @@ void StartMotionPlannerTask(void *argument)
 void StartRosTask(void *argument)
 {
   /* USER CODE BEGIN StartRosTask */
-  if (RosInterface_Init(&g_ros, &g_arm)) {
-      RosInterface_Task(NULL); // never returns - spins the executor forever
-  }
-  /* agent unreachable - park here rather than crash, so the rest of the
-   * board (control loop, etc.) keeps running while you debug Ethernet */
-  for(;;)
-  {
-    osDelay(1000);
-  }
+  while (!g_net_ready) { osDelay(50); }
+
+  rmw_uros_set_custom_transport(false, (void *)"192.168.50.1",
+      cubemx_transport_open, cubemx_transport_close,
+      cubemx_transport_write, cubemx_transport_read);
+
+  rcutils_allocator_t a = rcutils_get_zero_initialized_allocator();
+  a.allocate      = microros_allocate;
+  a.deallocate    = microros_deallocate;
+  a.reallocate    = microros_reallocate;
+  a.zero_allocate = microros_zero_allocate;
+  if (!rcutils_set_default_allocator(&a)) { for(;;) osDelay(1000); }
+
+  bool ok = RosInterface_Init(&g_ros, &g_arm);   /* blocks until the agent answers */
+  g_heap_free = xPortGetFreeHeapSize();
+  if (ok) { RosInterface_Task(NULL); }
+  for(;;) { osDelay(1000); }        
   /* USER CODE END StartRosTask */
 }
 
