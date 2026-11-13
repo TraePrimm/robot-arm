@@ -67,6 +67,7 @@ size_t cubemx_transport_read(struct uxrCustomTransport* transport, uint8_t* buf,
 
     int ret = 0;
     //set timeout
+    if (timeout < 1) { timeout = 1; }   /* lwIP: SO_RCVTIMEO of 0 means block forever */
     struct timeval tv_out;
     tv_out.tv_sec = timeout / 1000;
     tv_out.tv_usec = (timeout % 1000) * 1000;

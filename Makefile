@@ -327,7 +327,7 @@ all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET
 
 LDSCRIPT = STM32H723xG_flash_axi.ld
 $(BUILD_DIR)/$(TARGET).elf: $(LDSCRIPT)
-#######################################
+#######################################cp STM32H723xG_flash_axi.ld STM32H723xG_flash_axi.ld.bak
 # micro-ROS addons
 #######################################
 LDFLAGS += micro_ros_stm32cubemx_utils/microros_static_library/libmicroros/libmicroros.a

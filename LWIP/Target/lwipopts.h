@@ -113,6 +113,8 @@
 #define CHECKSUM_CHECK_ICMP6 0
 /*-----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
+#define MEMP_NUM_UDP_PCB 15
+#define LWIP_SO_RCVTIMEO 1
 
 /* USER CODE END 1 */
 

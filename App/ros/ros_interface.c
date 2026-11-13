@@ -142,12 +142,15 @@ bool RosInterface_Init(RosInterface_t *ros, RobotArm_t *arm)
     return true;
 }
 
+volatile uint32_t g_ros_spin_count = 0;
+
 void RosInterface_Task(void *argument)
 {
     (void)argument;
     RosInterface_t *ros = s_active_ros; // set by RosInterface_Init
 
     for (;;) {
+        g_ros_spin_count++;
         rclc_executor_spin_some(&ros->executor, RCL_MS_TO_NS(10));
         osDelay(1);
     }
