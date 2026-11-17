@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/trae/robot-arm/build/Debug/cmake_install.cmake",
-		"/home/trae/robot-arm/build/Debug/cmake/stm32cubemx/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

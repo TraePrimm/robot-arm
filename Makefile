@@ -315,7 +315,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32H723xG_flash.ld
+LDSCRIPT = STM32H723xG_flash_axi.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 
@@ -325,7 +325,7 @@ LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BU
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
-LDSCRIPT = STM32H723xG_flash.ld
+LDSCRIPT = STM32H723xG_flash_axi.ld
 $(BUILD_DIR)/$(TARGET).elf: $(LDSCRIPT)
 #######################################cp STM32H723xG_flash_axi.ld STM32H723xG_flash_axi.ld.bak
 # micro-ROS addons

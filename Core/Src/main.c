@@ -122,7 +122,11 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  GPIO_InitTypeDef cs = {0};
+  cs.Pin = GPIO_PIN_4; cs.Mode = GPIO_MODE_OUTPUT_PP; cs.Pull = GPIO_NOPULL; cs.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+  HAL_GPIO_Init(GPIOA, &cs);
   /* USER CODE END 2 */
 
   /* Init scheduler */

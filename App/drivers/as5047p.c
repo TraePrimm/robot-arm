@@ -20,6 +20,9 @@
 #define AS5047P_REG_ANGLECOM  0x3FFF
 #define AS5047P_READ_BIT      0x4000
 
+volatile uint32_t g_enc_hal = 0;      /* last HAL status: 0 OK, 1 ERROR, 2 BUSY, 3 TIMEOUT */
+volatile uint32_t g_enc_spi_err = 0;  /* HAL_SPI_GetError() bitmask */
+
 static void as5047p_cs_low(AS5047P_t *enc)  { HAL_GPIO_WritePin(enc->cs_port, enc->cs_pin, GPIO_PIN_RESET); }
 static void as5047p_cs_high(AS5047P_t *enc) { HAL_GPIO_WritePin(enc->cs_port, enc->cs_pin, GPIO_PIN_SET); }
 
@@ -38,8 +41,10 @@ static uint16_t as5047p_transfer(AS5047P_t *enc, uint16_t command)
     uint16_t rx = 0;
 
     as5047p_cs_low(enc);
-    HAL_SPI_TransmitReceive(enc->hspi, (uint8_t *)&tx, (uint8_t *)&rx, 1, 10);
+    g_enc_hal = (uint32_t)HAL_SPI_TransmitReceive(enc->hspi, (uint8_t *)&tx, (uint8_t *)&rx, 1, 10);
+    g_enc_spi_err = HAL_SPI_GetError(enc->hspi);
     as5047p_cs_high(enc);
+    for (volatile int i = 0; i < 100; i++) { __NOP(); }   /* keep CSn high for at least 350 ns */
 
     return rx;
 }
