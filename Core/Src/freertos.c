@@ -26,6 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "as5047p.h"
+#include "spi.h"
 #include "robot_arm.h"
 #include "ros_interface.h"
 #include <rmw_microros/rmw_microros.h>   
@@ -57,6 +59,8 @@ typedef StaticTask_t osStaticThreadDef_t;
    volatile uint32_t g_heap_free = 0;
    volatile uint32_t j0_ready = 0;
    volatile uint32_t j0_tmc   = 0;
+volatile uint16_t g_enc_raw = 0;   /* encoder probe */
+volatile uint32_t g_enc_ok = 0, g_enc_err = 0, g_enc_diaagc = 0;
    volatile uint32_t g_fault_code = 0;   /* 1 = stack overflow, 2 = malloc failed */
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -384,10 +388,16 @@ void StartRosTask(void *argument)
 void StartDiagTask(void *argument)
 {
   /* USER CODE BEGIN StartDiagTask */
-  /* Infinite loop */
+  /* Encoder probe (read-only). Joint 0 is open-loop, so nothing else uses SPI1.
+   * Remove before closed loop: one reader per bus. */
+  AS5047P_t enc;
+  AS5047P_Init(&enc, &hspi1, GPIOA, GPIO_PIN_4);
   for(;;)
   {
-    osDelay(1);
+    uint16_t v;
+    if (AS5047P_ReadAngleRaw(&enc, &v)) { g_enc_raw = v; g_enc_ok++; } else { g_enc_err++; }
+    if (AS5047P_ReadRegister(&enc, 0x3FFC, &v)) { g_enc_diaagc = v; }
+    osDelay(20);
   }
   /* USER CODE END StartDiagTask */
 }

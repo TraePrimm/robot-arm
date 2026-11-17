@@ -34,14 +34,14 @@ static uint8_t as5047p_even_parity(uint16_t value)
 
 static uint16_t as5047p_transfer(AS5047P_t *enc, uint16_t command)
 {
-    uint8_t tx[2] = { (uint8_t)(command >> 8), (uint8_t)(command & 0xFF) };
-    uint8_t rx[2] = { 0 };
+    uint16_t tx = command;   /* 16-bit frames: one SPI item is one whole word, MSB first */
+    uint16_t rx = 0;
 
     as5047p_cs_low(enc);
-    HAL_SPI_TransmitReceive(enc->hspi, tx, rx, 1, 10);
+    HAL_SPI_TransmitReceive(enc->hspi, (uint8_t *)&tx, (uint8_t *)&rx, 1, 10);
     as5047p_cs_high(enc);
 
-    return ((uint16_t)rx[0] << 8) | rx[1];
+    return rx;
 }
 
 void AS5047P_Init(AS5047P_t *enc, SPI_HandleTypeDef *hspi, GPIO_TypeDef *cs_port, uint16_t cs_pin)
@@ -91,5 +91,20 @@ bool AS5047P_ReadAngleDeg(AS5047P_t *enc, float *angle_deg_out)
         return false;
     }
     *angle_deg_out = ((float)raw / 16384.0f) * 360.0f;
+    return true;
+}
+
+/* Raw 16-bit reply of any register (command frame, then NOP frame).
+ * bit15 parity, bit14 error flag, bits13-0 data. False on parity error. */
+bool AS5047P_ReadRegister(AS5047P_t *enc, uint16_t reg, uint16_t *reply_out)
+{
+    uint16_t cmd = (reg & 0x3FFF) | AS5047P_READ_BIT;
+    cmd |= ((uint16_t)as5047p_even_parity(cmd)) << 15;
+    as5047p_transfer(enc, cmd);
+    uint16_t reply = as5047p_transfer(enc, 0x0000);
+    if (as5047p_even_parity(reply & 0x7FFF) != ((reply >> 15) & 0x01)) {
+        return false;
+    }
+    *reply_out = reply;
     return true;
 }

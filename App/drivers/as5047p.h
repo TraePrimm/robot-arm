@@ -27,4 +27,7 @@ bool AS5047P_ReadAngleRaw(AS5047P_t *enc, uint16_t *angle_out);
 /* Convenience: raw angle converted to degrees (0-360). */
 bool AS5047P_ReadAngleDeg(AS5047P_t *enc, float *angle_deg_out);
 
+/* Raw reply of any register, e.g. ERRFL 0x0001, DIAAGC 0x3FFC. */
+bool AS5047P_ReadRegister(AS5047P_t *enc, uint16_t reg, uint16_t *reply_out);
+
 #endif // AS5047P_H
