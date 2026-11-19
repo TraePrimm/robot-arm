@@ -82,14 +82,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = Joint_0_EncoderCS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(Joint_0_EncoderCS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : Joint_1_EncoderCS_Pin */
   GPIO_InitStruct.Pin = Joint_1_EncoderCS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(Joint_1_EncoderCS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Joint_4_EncoderCS_Pin Joint_4_Dir_Pin Joint_5_EncoderCS_Pin Joint_5_Dir_Pin */

@@ -26,29 +26,28 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "as5047p.h"
 #include "spi.h"
 #include "robot_arm.h"
 #include "ros_interface.h"
-#include <rmw_microros/rmw_microros.h>   
-#include <uxr/client/transport.h>        
+#include <rmw_microros/rmw_microros.h>
+#include <uxr/client/transport.h>
 #include <rcutils/allocator.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE BEGIN PTD */
-
+ 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+ 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+ 
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -59,8 +58,17 @@ typedef StaticTask_t osStaticThreadDef_t;
    volatile uint32_t g_heap_free = 0;
    volatile uint32_t j0_ready = 0;
    volatile uint32_t j0_tmc   = 0;
-volatile uint16_t g_enc_raw = 0;   /* encoder probe */
-volatile uint32_t g_enc_ok = 0, g_enc_err = 0, g_enc_diaagc = 0;
+/* Joint 0 encoder snapshot, copied by the Diagnostics task from the values the
+ * ControlLoop task caches. Read with STM32_Programmer_CLI -r32 (addresses from
+ * arm-none-eabi-nm build/*.elf | grep g_enc_). Nothing here touches SPI1. */
+volatile float    g_enc_deg      = 0.0f;  /* last good angle, 0..360 (raw, before sign/offset) */
+volatile float    g_j0_pos_deg   = 0.0f;  /* joint 0 position (sign/offset, unwrapped) */
+volatile uint32_t g_enc_ok       = 0;     /* successful register reads */
+volatile uint32_t g_enc_err      = 0;     /* failed register reads */
+volatile uint32_t g_enc_diaagc   = 0;     /* last DIAAGC: bit8 LF, bit10 MAGH, bit11 MAGL, 7:0 AGC */
+volatile int32_t  g_enc_last_err = 0;     /* last driver error code (3 parity, 11 no device ...) */
+volatile uint32_t j0_enc_ok      = 0;     /* 1 = encoder initialized and reading */
+volatile uint32_t j0_fault       = 0;     /* 1 = joint 0 latched a fault */
    volatile uint32_t g_fault_code = 0;   /* 1 = stack overflow, 2 = malloc failed */
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -173,12 +181,12 @@ void vApplicationMallocFailedHook(void);
 /* USER CODE BEGIN 4 */
 void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName)
 {
-
+ 
     (void)xTask; (void)pcTaskName;
     g_fault_code = 1;
     __disable_irq();
     for(;;) {}
-
+ 
    /* Run time stack overflow checking is performed if
    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
    called if a stack overflow is detected. */
@@ -188,12 +196,12 @@ void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName)
 /* USER CODE BEGIN 5 */
 void vApplicationMallocFailedHook(void)
 {
-
+ 
     g_fault_code = 2;
     __disable_irq();
     for(;;) {}
-
-
+ 
+ 
    /* vApplicationMallocFailedHook() will only be called if
    configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h. It is a hook
    function that will get called if a call to pvPortMalloc() fails.
@@ -214,7 +222,7 @@ void vApplicationMallocFailedHook(void)
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+ 
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -297,10 +305,10 @@ void StartControlLoopTask(void *argument)
 {
   /* USER CODE BEGIN StartControlLoopTask */
   RobotArm_Init(&g_arm); // TODO: check return value once joints 2-5 are wired
-
+ 
   TickType_t lastWake = osKernelGetTickCount();
   const uint32_t period_ticks = 1; // 1ms -> 1kHz control loop
-
+ 
   for(;;)
   {
     j0_ready = g_arm.joints[0].ready ? 1u : 0u;
@@ -359,18 +367,18 @@ void StartRosTask(void *argument)
 {
   /* USER CODE BEGIN StartRosTask */
   while (!g_net_ready) { osDelay(50); }
-
+ 
   rmw_uros_set_custom_transport(false, (void *)"192.168.50.1",
       cubemx_transport_open, cubemx_transport_close,
       cubemx_transport_write, cubemx_transport_read);
-
+ 
   rcutils_allocator_t a = rcutils_get_zero_initialized_allocator();
   a.allocate      = microros_allocate;
   a.deallocate    = microros_deallocate;
   a.reallocate    = microros_reallocate;
   a.zero_allocate = microros_zero_allocate;
   if (!rcutils_set_default_allocator(&a)) { for(;;) osDelay(1000); }
-
+ 
   bool ok = RosInterface_Init(&g_ros, &g_arm);   /* blocks until the agent answers */
   g_heap_free = xPortGetFreeHeapSize();
   if (ok) { RosInterface_Task(NULL); }
@@ -388,15 +396,20 @@ void StartRosTask(void *argument)
 void StartDiagTask(void *argument)
 {
   /* USER CODE BEGIN StartDiagTask */
-  /* Encoder probe (read-only). Joint 0 is open-loop, so nothing else uses SPI1.
-   * Remove before closed loop: one reader per bus. */
-  AS5047P_t enc;
-  AS5047P_Init(&enc, &hspi1, GPIOA, GPIO_PIN_4);
+  /* Read-only snapshot of joint 0's encoder. The ControlLoop task is the only
+   * SPI1 user: it reads the angle every tick and DIAAGC every ~300 ms, and
+   * caches the results in g_arm.joints[0].encoder. */
   for(;;)
   {
-    uint16_t v;
-    if (AS5047P_ReadAngleRaw(&enc, &v)) { g_enc_raw = v; g_enc_ok++; } else { g_enc_err++; }
-    if (AS5047P_ReadRegister(&enc, 0x3FFC, &v)) { g_enc_diaagc = v; }
+    const Joint_t *j0 = &g_arm.joints[0];
+    g_enc_deg      = j0->encoder.last_deg;
+    g_j0_pos_deg   = Joint_GetPositionDeg(j0);
+    g_enc_ok       = j0->encoder.ok_count;
+    g_enc_err      = j0->encoder.err_count;
+    g_enc_diaagc   = j0->encoder.last_diaagc;
+    g_enc_last_err = j0->encoder.last_err;
+    j0_enc_ok      = Joint_EncoderOk(j0) ? 1u : 0u;
+    j0_fault       = Joint_HasFault(j0) ? 1u : 0u;
     osDelay(20);
   }
   /* USER CODE END StartDiagTask */
@@ -422,6 +435,6 @@ void StartHomingTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+ 
 /* USER CODE END Application */
 
